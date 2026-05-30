@@ -141,6 +141,14 @@
         box-shadow: none;
       }
 
+      .stop-btn {
+        background-color: #ef4444;
+        box-shadow: 0 3px 0 #b91c1c;
+      }
+      .stop-btn:hover {
+        background-color: #dc2626;
+      }
+
       .hidden {
         display: none !important;
       }
@@ -150,6 +158,7 @@
         height: 100%;
         border: none;
         border-radius: 8px;
+        flex-grow: 1; /* Laat de iframe alle beschikbare ruimte innemen */
       }
     </style>
   </head>
@@ -200,6 +209,9 @@
         style="width: 100%; height: 100%"
       >
         <iframe src="https://evivermeeren.github.io/game-pchardware/"></iframe>
+        <button class="game-btn stop-btn" onclick="terugNaarPresentatie()">
+          Terug naar de presentatie
+        </button>
       </div>
     </div>
 
@@ -276,7 +288,7 @@
           color: "#10b981",
           status: "📊 Harde data uit het onderzoek",
           image: "uitlegEvi.png",
-          text: "Ik heb het grondig onderzocht in 3 parallelklassen (48 leerlingen). De resultaten zijn zwart-op-wit: de startmotivatie steeg naar 84%, de focus tijdens de test was 91% en de stress daalde spectaculair van 72% naar 21%! De gemiddelde testscores klommen naar 8.6 op 10. De kwaliteit blijft hoog, mét behoud van hun mentale gezondheid.",
+          text: "Ik heb het grondig onderzocht in 3 parallelklassen van het 1ste middelbaar a-stroom (48 leerlingen). De resultaten zijn zwart-op-wit: de startmotivatie steeg van 16% naar 84%, de focus tijdens de test was 91% in plaats van 43% en de stress daalde spectaculair van 72% naar 21%! De gemiddelde testscores klommen van 7.9 op 10 naar 8.6 op 10. De kwaliteit blijft hoog, mét behoud van hun mentale gezondheid.",
           choices: [{ text: "Verder", target: "collega_overtuigd" }],
         },
         collega_overtuigd: {
@@ -319,7 +331,7 @@
           choices: [{ text: "Verder", target: "collega_coderen" }],
         },
         collega_coderen: {
-          speaker: "Oudere Collega",
+          speaker: "Collega",
           color: "#f59e0b",
           status: "💻 Technische drempels",
           image: "sceptischeleerkracht.jpeg",
@@ -334,17 +346,78 @@
           status: "🛠️ Demo: De Lerarenkant",
           video: "leraren.mov",
           text: "Absoluut! Hier zie je een demo van het lerarendashboard. Je hoeft niets te coderen. Je typt je vragen in en het systeem genereert de rest. Makkelijk en direct inzetbaar in je eigen vak!",
-          choices: [{ text: "Verder", target: "live_testen" }],
+          choices: [{ text: "Verder", target: "onderzoeksresultaten" }],
         },
-        live_testen: {
+        onderzoeksresultaten: {
           speaker: "Evi",
           color: "#10b981",
-          status: "🚀 Tijd voor actie!",
+          status: "📊 Tijd voor actie!",
           image: "testjij.jpeg",
-          text: "Hé jij! Wil jij het ook testen? Dan geef ik nu graag het woord (en het toetsenbord) aan jullie om het zelf te ervaren.",
-          choices: [{ text: "Ja, start de live demo!", target: "launch_game" }],
+          text: "Ik heb alle bevindingen, de ruwe data en de rubric in een makkelijk overzicht gegoten. Wil je deze eerst bekijken in een nieuw tabblad, of gaan we meteen door naar de live demo?",
+          choices: [
+            {
+              text: "Bekijk de onderzoeksresultaten",
+              url: "https://evivermeeren.github.io/innovator-game-based-evaluation/",
+            },
+            {
+              text: "Genoeg data, ik wil meteen live testen!",
+              target: "launch_game",
+            },
+          ],
+        },
+
+        presentatie_afronden: {
+          speaker: "Evi",
+          color: "#f59e0b",
+          status: "🤔 Jouw mening?",
+          image: "uitlegEvi.png",
+          text: "Je hebt nu het probleem, het onderzoek, de resultaten en de tool gezien. Wat denk jij hiervan als leerkracht?",
+          choices: [
+            {
+              text: "👍 Dit zie ik wel zitten in mijn vak",
+              target: "positieve_afsluiter",
+            },
+            {
+              text: "🤨 Ik heb nog enkele bedenkingen",
+              target: "kritische_afsluiter",
+            },
+          ],
+        },
+        positieve_afsluiter: {
+          speaker: "Evi",
+          color: "#10b981",
+          status: "🚀 Op naar innovatie",
+          image: "uitlegEvi.png",
+          text: "Fantastisch! Dat betekent natuurlijk niet dat we alle klassieke toetsen moeten afschaffen. Game-based evaluation is geen vervanging van evaluatie, maar een extra instrument in onze gereedschapskist. Als deze aanpak leerlingen meer motivatie, minder stress en meer betrokkenheid kan geven, dan is het volgens mij de moeite waard om ermee te experimenteren.",
+          choices: [
+            { text: "Rond de presentatie af", target: "eindboodschap" },
+          ],
+        },
+        kritische_afsluiter: {
+          speaker: "Evi",
+          color: "#10b981",
+          status: "💡 Kritisch blijven denken",
+          image: "uitlegEvi.png",
+          text: "Die bedenkingen zijn volledig terecht. Uit mijn onderzoek bleek ook dat niet elke leerling van games houdt, niet elk vak zich even goed leent voor deze aanpak en niet elke leerkracht hier meteen mee aan de slag wil. Toch tonen de resultaten dat het voor veel leerlingen een waardevolle aanvulling kan zijn op klassieke evaluaties.",
+          choices: [
+            { text: "Rond de presentatie af", target: "eindboodschap" },
+          ],
+        },
+        eindboodschap: {
+          speaker: "Evi",
+          color: "#10b981",
+          status: "🏁 Einde",
+          image: "uitlegEvi.png",
+          text: "Heel erg bedankt voor jullie aandacht en de kans om dit samen te ontdekken! Hopelijk heb ik jullie kunnen overtuigen om dit zelf ook eens uit te testen binnen jouw vakgebied. Zijn er nog vragen uit het publiek?",
+          choices: [],
         },
       };
+
+      function terugNaarPresentatie() {
+        document.getElementById("evaluation-scene").classList.add("hidden");
+        document.getElementById("intro-scene").classList.remove("hidden");
+        loadScene("presentatie_afronden");
+      }
 
       function loadScene(sceneKey) {
         if (sceneKey === "launch_game") {
@@ -413,7 +486,6 @@
           if (i < scene.text.length) {
             let char = scene.text.charAt(i);
 
-            // Als we een HTML tag tegenkomen (bijv. <b> of <br>), renderen we deze direct in 1 keer mee
             if (char === "<") {
               let endIndex = scene.text.indexOf(">", i);
               if (endIndex !== -1) {
@@ -438,7 +510,13 @@
               const btn = document.createElement("button");
               btn.className = "game-btn";
               btn.innerHTML = choice.text;
-              btn.onclick = () => loadScene(choice.target);
+              btn.onclick = () => {
+                if (choice.url) {
+                  window.open(choice.url, "_blank");
+                } else if (choice.target) {
+                  loadScene(choice.target);
+                }
+              };
               choicesContainer.appendChild(btn);
             });
           }
