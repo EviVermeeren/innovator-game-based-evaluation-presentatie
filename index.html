@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Presentatie: De Innovatieve Leerkracht</title>
+    <style>
+      body {
+        margin: 0;
+        background-color: #1e293b;
+        color: white;
+        font-family: "Courier New", Courier, monospace;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      #game-container {
+        width: 850px;
+        height: 600px; /* Iets hoger gemaakt voor de resultaten-tekst */
+        background-color: #0f172a;
+        border: 4px solid #3b82f6;
+        border-radius: 12px;
+        position: relative;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      }
+
+      .scene-image {
+        width: 100%;
+        height: 270px;
+        background-color: #334155;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        border: 2px solid #334155;
+        position: relative;
+      }
+
+      .scene-image img,
+      .scene-image video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+
+      .status-overlay {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background-color: rgba(239, 68, 68, 0.9);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 0.9rem;
+        animation: pulse 1.5s infinite;
+        z-index: 10;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      #dialogue-box {
+        background-color: #1e293b;
+        border: 2px solid #10b981;
+        border-radius: 8px;
+        padding: 1.25rem;
+        min-height: 150px; /* Iets groter om alle tekst mooi te laten passen */
+        max-height: 180px;
+        overflow-y: auto; /* Voegt een scrollbar toe indien nodig */
+        font-size: 0.95rem;
+        line-height: 1.4;
+        margin-top: 0.75rem;
+      }
+
+      /* Scrollbar styling voor het dialoogvenster */
+      #dialogue-box::-webkit-scrollbar {
+        width: 8px;
+      }
+      #dialogue-box::-webkit-scrollbar-track {
+        background: #0f172a;
+        border-radius: 4px;
+      }
+      #dialogue-box::-webkit-scrollbar-thumb {
+        background: #3b82f6;
+        border-radius: 4px;
+      }
+
+      .speaker-name {
+        font-weight: bold;
+        margin-bottom: 0.25rem;
+        display: block;
+      }
+
+      .button-container {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+        margin-top: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .game-btn {
+        background-color: #3b82f6;
+        color: white;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 3px 0 #1d4ed8;
+      }
+
+      .game-btn:hover {
+        background-color: #1d4ed8;
+        transform: translateY(-1px);
+      }
+
+      .game-btn:active {
+        transform: translateY(2px);
+        box-shadow: none;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game-container">
+      <!-- INTRO SCENE (HET INTERACTIEVE VERHAAL & VIDEOS) -->
+      <div
+        id="intro-scene"
+        style="
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        "
+      >
+        <div class="scene-image" id="scene-bg">
+          <img
+            id="scene-img"
+            src="wenendeleerling.jpeg"
+            alt="Virtuele Leraarskamer"
+          />
+          <!-- Video element klaargezet voor de demo's -->
+          <video
+            id="scene-video"
+            class="hidden"
+            controls
+            autoplay
+            loop
+            muted
+          ></video>
+          <div id="visual-status" class="status-overlay hidden">
+            😭 LL aan het wenen...
+          </div>
+        </div>
+
+        <div id="dialogue-box">
+          <span id="speaker-label" class="speaker-name" style="color: #10b981"
+            >Evi:</span
+          >
+          <span id="text-target">Laden van de presentatie...</span>
+        </div>
+
+        <div class="button-container" id="choices">
+          <!-- Knoppen worden dynamisch ingeladen -->
+        </div>
+      </div>
+
+      <!-- HET ECHTE SPEL / DEMO (WORDT PAS ZICHTBAAR OP HET EINDE) -->
+      <div
+        id="evaluation-scene"
+        class="hidden"
+        style="width: 100%; height: 100%"
+      >
+        <iframe src="https://evivermeeren.github.io/game-pc-hardware/"></iframe>
+      </div>
+    </div>
+
+    <script>
+      // Het volledige scenario, nu mét specifieke afbeeldingen en video's per stap
+      const story = {
+        start: {
+          speaker: "Evi",
+          color: "#10b981",
+          status: "😭 Leerling weent van de stress...",
+          image: "wenendeleerling.jpeg",
+          text: "Welkom collega's. We zijn vandaag op BA Pitzemburg, een prestigieuze school met hoge verwachtingen. De prestatiedruk is enorm hoog. Ik geef hier net een klassieke, traditionele toets af aan een leerling... en kijk, de leerling begint meteen te wenen van de stress. Dit kan toch niet de bedoeling zijn van onderwijs?",
+          choices: [{ text: "Verder", target: "wat_kan_je_doen" }],
+        },
+        wat_kan_je_doen: {
+          speaker: "Evi",
+          color: "#10b981",
+          status: "🤔 Wat gaan we doen?",
+          image: "vraagtzichaf.jpeg",
+          text: "Ik zie deze spanning en onzekerheid zo vaak in de klaspraktijk. Het blokkeert de leerlingen volledig. We moeten hier kritisch naar kijken. Wat kan ik als innovatieve leerkracht nu eigenlijk doen?",
+          choices: [
+            {
+              text: "Ik blijf klassieke toetsen maken",
+              target: "klassiek_blijven",
+            },
+            {
+              text: "Ik probeer iets nieuws: game-based evaluatie",
+              target: "game_gekozen",
+            },
+          ],
+        },
+        klassiek_blijven: {
+          speaker: "Evi",
+          color: "#10b981",
+          status: "😭 Leerling weent opnieuw...",
+          image: "hardwenendeleerling.jpeg",
+          text: "Oei... We houden vast aan de traditie, maar het resultaat blijft hetzelfde: de leerling zit weer te wenen aan de bank, de motivatie keldert en de faalangst blokkeert hun groei. Dit lost niets op. Zullen we toch iets anders proberen?",
+          choices: [
+            { text: "Probeer iets nieuws!", target: "wat_kan_je_doen" },
+          ],
+        },
+        game_gekozen: {
+          speaker: "Collega",
+          color: "#f59e0b",
+          status: "🧐 Vraagtekens in de leraarskamer",
+          image: "sceptischeleerkrachtGem.jpeg",
+          text: "Ho maar Evi, 'Game-based evaluatie'? Wat is dat nu eigenlijk weer voor iets moderns? Gaan we nu gewoon een beetje gamen in de les in plaats van serieus evalueren?",
+          choices: [
+            { text: "Leg het uit aan je collega", target: "uitleg_gbe" },
+          ],
+        },
+        uitleg_gbe: {
+          speaker: "Evi",
+          color: "#10b981",
+          status: "💡 Didactische onderbouwing",
+          image: "uitlegEvi.png",
+          text: "Nee hoor! Het speelse is puur de verpakking. De leerdoelen, de vragen en de strikte criteria blijven exact hetzelfde als bij een gewone toets. Maar door de gamevorm verlagen we de affectieve filter van de leerling, waardoor de stress verdwijnt en we hun échte kennis meten.",
+          choices: [{ text: "Verder", target: "collega_reactie" }],
+        },
+        collega_reactie: {
+          speaker: "Collega",
+          color: "#f59e0b",
+          status: "🤨 Sceptisch maar nieuwsgierig",
+          image: "collegaSteltVraag.png",
+          text: "Oké, nu weten we wat het is. Klinkt heel cool en leuk voor de motivatie, hoor... Maar werkt dat ook écht in de praktijk? Of dalen onze standaarden hiermee?",
+          choices: [
+            {
+              text: "Toon de onderzoeksresultaten",
+              target: "resultaten_tonen",
+            },
+          ],
+        },
+        resultaten_tonen: {
+          speaker: "Evi",
+          color: "#10b981",
+          status: "📊 Harde data uit het onderzoek",
+          image: "uitlegEvi.png",
+          text: "Ik heb het grondig onderzocht in 3 parallelklassen (48 leerlingen). De resultaten zijn zwart-op-wit: de startmotivatie steeg naar 84%, de focus tijdens de test was 91% en de stress daalde spectaculair van 72% naar 21%! De gemiddelde testscores klommen naar 8.6 op 10. De kwaliteit blijft hoog, mét behoud van hun mentale gezondheid.",
+          choices: [{ text: "Verder", target: "collega_overtuigd" }],
+        },
+        collega_overtuigd: {
+          speaker: "Collega",
+          color: "#10b981",
+          status: "🤩 Collega is enthousiast!",
+          image: "collegaSteltVraag.png",
+          text: "Wauw! Maar hoe ziet zo'n game er dan concreet uit?",
+          choices: [
+            { text: "Toon de demo als video", target: "demo_leerling_video" },
+          ],
+        },
+        demo_leerling_video: {
+          speaker: "Evi",
+          color: "#10b981",
+          status: "🎮 Demo: De Leerlingkant",
+          video: "demo_leerling.mp4",
+          text: "Hier zie je een demo van de leerlingkant. Tijdens het spelen verdwijnt de faalangst naar de achtergrond door de directe interactie en de game-omgeving.",
+          choices: [
+            {
+              text: "Verder naar de reacties van je collega",
+              target: "collega_vraagt_mening",
+            },
+          ],
+        },
+        collega_vraagt_mening: {
+          speaker: "Collega",
+          color: "#f59e0b",
+          status: "🤔 Wat vinden de anderen?",
+          image: "sceptischeleerkracht.jpeg",
+          text: "Dit is indrukwekkend, wat vinden onze collega's hiervan?",
+          choices: [
+            { text: "Geef de samenvatting", target: "collega_inzichten" },
+          ],
+        },
+        collega_inzichten: {
+          speaker: "Evi",
+          color: "#10b981",
+          status: "📋 Inzichten van collega's",
+          image: "uitlegEvi.png",
+          text: "Uit mijn bevraging blijkt dat maar liefst 92% overtuigd is van de stressvermindering en 62% het als een haalbaar alternatief ziet voor hun eigen vak. Toch botsen ze nog op praktische drempels zoals tijdgebrek en technische kennis, waardoor er vooral een grote vraag is naar kant-en-klare, vakspecifieke games en een beetje bijscholing.",
+          choices: [{ text: "Verder", target: "collega_coderen" }],
+        },
+        collega_coderen: {
+          speaker: "Oudere Collega",
+          color: "#f59e0b",
+          status: "💻 Technische drempels",
+          image: "sceptischeleerkracht.jpeg",
+          text: "Oké, maar jij kunt super goed coderen. Kunnen wij dat dan ook gebruiken zonder zelf alles te moeten programmeren?",
+          choices: [
+            { text: "Toon de lerarenkant", target: "demo_leerkracht_video" },
+          ],
+        },
+        demo_leerkracht_video: {
+          speaker: "Evi",
+          color: "#10b981",
+          status: "🛠️ Demo: De Lerarenkant",
+          video: "demo_leerkracht.mp4",
+          text: "Absoluut! Hier zie je een demo van het lerarendashboard. Je hoeft niets te coderen. Je typt je vragen in en het systeem genereert de rest. Makkelijk en direct inzetbaar in je eigen vak!",
+          choices: [{ text: "Verder", target: "live_testen" }],
+        },
+        live_testen: {
+          speaker: "Evi",
+          color: "#10b981",
+          status: "🚀 Tijd voor actie!",
+          image: "uitlegEvi.png",
+          text: "Hé jij! Wil jij het ook testen? Dan geef ik nu graag het woord (en het toetsenbord) aan jullie om het zelf te ervaren.",
+          choices: [{ text: "Ja, start de live demo!", target: "launch_game" }],
+        },
+      };
+
+      function loadScene(sceneKey) {
+        if (sceneKey === "launch_game") {
+          // Schakel over naar je echte pc-hardware game/video link
+          document.getElementById("intro-scene").classList.add("hidden");
+          document
+            .getElementById("evaluation-scene")
+            .classList.remove("hidden");
+          return;
+        }
+
+        const scene = story[sceneKey];
+        const speakerLabel = document.getElementById("speaker-label");
+        const textTarget = document.getElementById("text-target");
+        const choicesContainer = document.getElementById("choices");
+        const visualStatus = document.getElementById("visual-status");
+        const imgEl = document.getElementById("scene-img");
+        const vidEl = document.getElementById("scene-video");
+
+        // --- WISSELEN TUSSEN AFBEELDING EN VIDEO ---
+        if (scene.video) {
+          imgEl.classList.add("hidden");
+          vidEl.classList.remove("hidden");
+          vidEl.src = scene.video;
+          vidEl.play();
+        } else {
+          vidEl.classList.add("hidden");
+          vidEl.pause();
+          imgEl.classList.remove("hidden");
+          imgEl.src = scene.image;
+        }
+
+        // Update de spreker en kleur
+        speakerLabel.innerHTML = scene.speaker + ":";
+        speakerLabel.style.color = scene.color;
+
+        // Update de status-overlay
+        if (scene.status) {
+          visualStatus.innerHTML = scene.status;
+          visualStatus.classList.remove("hidden");
+
+          if (
+            sceneKey.includes("fail") ||
+            sceneKey === "start" ||
+            sceneKey === "klassiek_blijven"
+          ) {
+            visualStatus.style.backgroundColor = "rgba(239, 68, 68, 0.9)"; // Rood
+          } else if (
+            sceneKey === "game_gekozen" ||
+            sceneKey === "collega_reactie" ||
+            sceneKey === "collega_coderen"
+          ) {
+            visualStatus.style.backgroundColor = "rgba(245, 158, 11, 0.9)"; // Oranje
+          } else {
+            visualStatus.style.backgroundColor = "rgba(16, 185, 129, 0.9)"; // Groen
+          }
+        } else {
+          visualStatus.classList.add("hidden");
+        }
+
+        document.getElementById("dialogue-box").style.borderColor = scene.color;
+        document.getElementById("dialogue-box").scrollTop = 0; // Scroll terug naar boven bij nieuwe slide
+
+        // --- SLIM TYPEWRITER EFFECT DAT HTML TAGS BEGRIJPT ---
+        textTarget.innerHTML = "";
+        let i = 0;
+        choicesContainer.innerHTML = "";
+
+        function typeWriter() {
+          if (i < scene.text.length) {
+            let char = scene.text.charAt(i);
+
+            // Als we een HTML tag tegenkomen (bijv. <b> of <br>), renderen we deze direct in 1 keer mee
+            if (char === "<") {
+              let endIndex = scene.text.indexOf(">", i);
+              if (endIndex !== -1) {
+                textTarget.innerHTML += scene.text.substring(i, endIndex + 1);
+                i = endIndex + 1;
+              } else {
+                textTarget.innerHTML += char;
+                i++;
+              }
+            } else {
+              textTarget.innerHTML += char;
+              i++;
+            }
+
+            // Houd de container gescrolld naar beneden tijdens het typen
+            const dialogueBox = document.getElementById("dialogue-box");
+            dialogueBox.scrollTop = dialogueBox.scrollHeight;
+
+            setTimeout(typeWriter, 8); // Hoge snelheid (8ms) zodat ook lange teksten vlot in beeld komen
+          } else {
+            // Toon de knoppen als de tekst klaar is
+            scene.choices.forEach((choice) => {
+              const btn = document.createElement("button");
+              btn.className = "game-btn";
+              btn.innerHTML = choice.text;
+              btn.onclick = () => loadScene(choice.target);
+              choicesContainer.appendChild(btn);
+            });
+          }
+        }
+        typeWriter();
+      }
+
+      // Start
+      document.addEventListener("DOMContentLoaded", () => {
+        loadScene("start");
+      });
+    </script>
+  </body>
+</html>
