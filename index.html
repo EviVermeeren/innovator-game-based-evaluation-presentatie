@@ -155,7 +155,6 @@
   </head>
   <body>
     <div id="game-container">
-      <!-- INTRO SCENE (HET INTERACTIEVE VERHAAL & VIDEOS) -->
       <div
         id="intro-scene"
         style="
@@ -172,7 +171,6 @@
             src="wenendeleerling.jpeg"
             alt="Virtuele Leraarskamer"
           />
-          <!-- Video element klaargezet voor de demo's -->
           <video
             id="scene-video"
             class="hidden"
@@ -193,23 +191,19 @@
           <span id="text-target">Laden van de presentatie...</span>
         </div>
 
-        <div class="button-container" id="choices">
-          <!-- Knoppen worden dynamisch ingeladen -->
-        </div>
+        <div class="button-container" id="choices"></div>
       </div>
 
-      <!-- HET ECHTE SPEL / DEMO (WORDT PAS ZICHTBAAR OP HET EINDE) -->
       <div
         id="evaluation-scene"
         class="hidden"
         style="width: 100%; height: 100%"
       >
-        <iframe src="https://evivermeeren.github.io/game-pc-hardware/"></iframe>
+        <iframe src="https://evivermeeren.github.io/game-pchardware/"></iframe>
       </div>
     </div>
 
     <script>
-      // Het volledige scenario, nu mét specifieke afbeeldingen en video's per stap
       const story = {
         start: {
           speaker: "Evi",
@@ -291,16 +285,14 @@
           status: "🤩 Collega is enthousiast!",
           image: "collegaSteltVraag.png",
           text: "Wauw! Maar hoe ziet zo'n game er dan concreet uit?",
-          choices: [
-            { text: "Toon de demo als video", target: "demo_leerling_video" },
-          ],
+          choices: [{ text: "Bekijk de demo!", target: "demo_leerling_video" }],
         },
         demo_leerling_video: {
           speaker: "Evi",
           color: "#10b981",
           status: "🎮 Demo: De Leerlingkant",
-          video: "demo_leerling.mp4",
-          text: "Hier zie je een demo van de leerlingkant. Tijdens het spelen verdwijnt de faalangst naar de achtergrond door de directe interactie en de game-omgeving.",
+          video: "stopmotion.mov",
+          text: "Hier zie je een demo van de leerlingkant. Ze krijgen dezelfde meerkeuzevragen als op een gewone toets. Er zijn simpelweg spelelementen ingebouwd zodat het niet meer lijkt op een traditionele toets. Ik kondig het ook aan als spel en laat het woordje 'toets' express achterwegen. Tijdens het spelen verdwijnt de faalangst naar de achtergrond door de directe interactie en de game-omgeving.",
           choices: [
             {
               text: "Verder naar de reacties van je collega",
@@ -340,7 +332,7 @@
           speaker: "Evi",
           color: "#10b981",
           status: "🛠️ Demo: De Lerarenkant",
-          video: "demo_leerkracht.mp4",
+          video: "leraren.mov",
           text: "Absoluut! Hier zie je een demo van het lerarendashboard. Je hoeft niets te coderen. Je typt je vragen in en het systeem genereert de rest. Makkelijk en direct inzetbaar in je eigen vak!",
           choices: [{ text: "Verder", target: "live_testen" }],
         },
@@ -348,7 +340,7 @@
           speaker: "Evi",
           color: "#10b981",
           status: "🚀 Tijd voor actie!",
-          image: "uitlegEvi.png",
+          image: "testjij.jpeg",
           text: "Hé jij! Wil jij het ook testen? Dan geef ik nu graag het woord (en het toetsenbord) aan jullie om het zelf te ervaren.",
           choices: [{ text: "Ja, start de live demo!", target: "launch_game" }],
         },
@@ -372,7 +364,6 @@
         const imgEl = document.getElementById("scene-img");
         const vidEl = document.getElementById("scene-video");
 
-        // --- WISSELEN TUSSEN AFBEELDING EN VIDEO ---
         if (scene.video) {
           imgEl.classList.add("hidden");
           vidEl.classList.remove("hidden");
@@ -385,11 +376,9 @@
           imgEl.src = scene.image;
         }
 
-        // Update de spreker en kleur
         speakerLabel.innerHTML = scene.speaker + ":";
         speakerLabel.style.color = scene.color;
 
-        // Update de status-overlay
         if (scene.status) {
           visualStatus.innerHTML = scene.status;
           visualStatus.classList.remove("hidden");
@@ -416,7 +405,6 @@
         document.getElementById("dialogue-box").style.borderColor = scene.color;
         document.getElementById("dialogue-box").scrollTop = 0; // Scroll terug naar boven bij nieuwe slide
 
-        // --- SLIM TYPEWRITER EFFECT DAT HTML TAGS BEGRIJPT ---
         textTarget.innerHTML = "";
         let i = 0;
         choicesContainer.innerHTML = "";
@@ -440,7 +428,6 @@
               i++;
             }
 
-            // Houd de container gescrolld naar beneden tijdens het typen
             const dialogueBox = document.getElementById("dialogue-box");
             dialogueBox.scrollTop = dialogueBox.scrollHeight;
 
@@ -459,7 +446,6 @@
         typeWriter();
       }
 
-      // Start
       document.addEventListener("DOMContentLoaded", () => {
         loadScene("start");
       });
